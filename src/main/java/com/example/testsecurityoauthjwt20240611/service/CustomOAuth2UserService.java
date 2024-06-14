@@ -1,8 +1,6 @@
 package com.example.testsecurityoauthjwt20240611.service;
 
-import com.example.testsecurityoauthjwt20240611.dto.GoogleResponse;
-import com.example.testsecurityoauthjwt20240611.dto.NaverResponse;
-import com.example.testsecurityoauthjwt20240611.dto.OAuth2Response;
+import com.example.testsecurityoauthjwt20240611.dto.*;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -34,6 +32,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return null;
         }
 
-        // 로그인 완료 후 로직 
+        // OAuth2 로그인 로직
+        // naver 나 goole 이 제공해준 고유 ID 값으로 우리 서비스에서 사용할 ID 로 만들어주기
+        String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
+
+        // 회원 정보를 담을 바구니 객체 만들기
+        UserDTO userDTO = new UserDTO();
+        // 바구니 객체에 로그인할 회원 정보 넣어주기
+        userDTO.setUsername(username);
+        userDTO.setName(oAuth2Response.getName());
+        userDTO.setRole("ROLE_USER");
+
+        return new CustomOAuth2User(userDTO);
     }
 }
